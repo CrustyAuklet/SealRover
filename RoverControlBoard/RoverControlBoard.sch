@@ -1,0 +1,390 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:teensy
+LIBS:DipSwitches
+LIBS:RoverControlBoard-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L DIP_SW_4 SW?
+U 1 1 586C429D
+P 7950 3750
+F 0 "SW?" H 8100 3200 60  0000 C CNN
+F 1 "DIP_SW_4" H 8000 3950 60  0000 C CNN
+F 2 "" H 8100 3200 60  0001 C CNN
+F 3 "" H 8100 3200 60  0001 C CNN
+	1    7950 3750
+	1    0    0    -1  
+$EndComp
+$Comp
+L Teensy3.2 U?
+U 1 1 586C6718
+P 6050 3350
+F 0 "U?" H 5300 5050 60  0000 C CNN
+F 1 "Teensy3.2" H 6650 1350 60  0000 C CNN
+F 2 "" H 6050 1450 60  0000 C CNN
+F 3 "" H 6050 1450 60  0000 C CNN
+	1    6050 3350
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 586C6A45
+P 8550 3700
+F 0 "#PWR?" H 8550 3450 50  0001 C CNN
+F 1 "GND" H 8550 3550 50  0000 C CNN
+F 2 "" H 8550 3700 50  0000 C CNN
+F 3 "" H 8550 3700 50  0000 C CNN
+	1    8550 3700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 586C6AEA
+P 4850 3100
+F 0 "#PWR?" H 4850 2850 50  0001 C CNN
+F 1 "GND" H 4850 2950 50  0000 C CNN
+F 2 "" H 4850 3100 50  0000 C CNN
+F 3 "" H 4850 3100 50  0000 C CNN
+	1    4850 3100
+	-1   0    0    1   
+$EndComp
+$Comp
+L CONN_01X03 P?
+U 1 1 586C6B15
+P 1200 1450
+F 0 "P?" H 1200 1650 50  0000 C CNN
+F 1 "CONN_01X03" V 1300 1450 50  0000 C CNN
+F 2 "" H 1200 1450 50  0000 C CNN
+F 3 "" H 1200 1450 50  0000 C CNN
+	1    1200 1450
+	-1   0    0    1   
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 586C6D87
+P 1550 1300
+F 0 "#PWR?" H 1550 1050 50  0001 C CNN
+F 1 "GND" H 1550 1150 50  0000 C CNN
+F 2 "" H 1550 1300 50  0000 C CNN
+F 3 "" H 1550 1300 50  0000 C CNN
+	1    1550 1300
+	-1   0    0    1   
+$EndComp
+Text Label 1900 1450 2    60   ~ 0
+5V
+Text Label 1900 1550 2    60   ~ 0
+SBUS
+Text Label 4600 3350 0    60   ~ 0
+SBUS
+Wire Wire Line
+	7050 4150 7650 4150
+Wire Wire Line
+	7050 4050 7650 4050
+Wire Wire Line
+	7650 4050 7650 4000
+Wire Wire Line
+	7050 3750 7650 3750
+Wire Wire Line
+	7650 3750 7650 3850
+Wire Wire Line
+	7050 3650 7650 3650
+Wire Wire Line
+	7650 3650 7650 3700
+Wire Wire Line
+	8350 3700 8550 3700
+Wire Wire Line
+	8350 3700 8350 4150
+Connection ~ 8350 3850
+Connection ~ 8350 4000
+Wire Wire Line
+	1400 1350 1550 1350
+Wire Wire Line
+	1550 1350 1550 1300
+Wire Wire Line
+	4850 3100 4850 3150
+Wire Wire Line
+	4850 3150 5050 3150
+Wire Wire Line
+	5050 3350 4600 3350
+Wire Wire Line
+	1400 1450 1900 1450
+Wire Wire Line
+	1400 1550 1900 1550
+Wire Wire Line
+	7050 3150 7400 3150
+Text Label 7400 3150 2    60   ~ 0
+5V
+$Comp
+L CONN_01X03 P?
+U 1 1 586C7454
+P 1200 2100
+F 0 "P?" H 1200 2300 50  0000 C CNN
+F 1 "CONN_01X03" V 1300 2100 50  0000 C CNN
+F 2 "" H 1200 2100 50  0000 C CNN
+F 3 "" H 1200 2100 50  0000 C CNN
+	1    1200 2100
+	-1   0    0    1   
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 586C745A
+P 1550 1950
+F 0 "#PWR?" H 1550 1700 50  0001 C CNN
+F 1 "GND" H 1550 1800 50  0000 C CNN
+F 2 "" H 1550 1950 50  0000 C CNN
+F 3 "" H 1550 1950 50  0000 C CNN
+	1    1550 1950
+	-1   0    0    1   
+$EndComp
+Text Label 1900 2100 2    60   ~ 0
+5V
+Wire Wire Line
+	1400 2000 1550 2000
+Wire Wire Line
+	1550 2000 1550 1950
+Wire Wire Line
+	1400 2100 1900 2100
+Wire Wire Line
+	1400 2200 1900 2200
+$Comp
+L CONN_01X03 P?
+U 1 1 586C7652
+P 1200 2750
+F 0 "P?" H 1200 2950 50  0000 C CNN
+F 1 "CONN_01X03" V 1300 2750 50  0000 C CNN
+F 2 "" H 1200 2750 50  0000 C CNN
+F 3 "" H 1200 2750 50  0000 C CNN
+	1    1200 2750
+	-1   0    0    1   
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 586C7658
+P 1550 2600
+F 0 "#PWR?" H 1550 2350 50  0001 C CNN
+F 1 "GND" H 1550 2450 50  0000 C CNN
+F 2 "" H 1550 2600 50  0000 C CNN
+F 3 "" H 1550 2600 50  0000 C CNN
+	1    1550 2600
+	-1   0    0    1   
+$EndComp
+Text Label 1900 2750 2    60   ~ 0
+5V
+Wire Wire Line
+	1400 2650 1550 2650
+Wire Wire Line
+	1550 2650 1550 2600
+Wire Wire Line
+	1400 2750 1900 2750
+Wire Wire Line
+	1400 2850 1900 2850
+$Comp
+L CONN_01X03 P?
+U 1 1 586C7664
+P 1200 3400
+F 0 "P?" H 1200 3600 50  0000 C CNN
+F 1 "CONN_01X03" V 1300 3400 50  0000 C CNN
+F 2 "" H 1200 3400 50  0000 C CNN
+F 3 "" H 1200 3400 50  0000 C CNN
+	1    1200 3400
+	-1   0    0    1   
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 586C766A
+P 1550 3250
+F 0 "#PWR?" H 1550 3000 50  0001 C CNN
+F 1 "GND" H 1550 3100 50  0000 C CNN
+F 2 "" H 1550 3250 50  0000 C CNN
+F 3 "" H 1550 3250 50  0000 C CNN
+	1    1550 3250
+	-1   0    0    1   
+$EndComp
+Text Label 1900 3400 2    60   ~ 0
+5V
+Wire Wire Line
+	1400 3300 1550 3300
+Wire Wire Line
+	1550 3300 1550 3250
+Wire Wire Line
+	1400 3400 1900 3400
+Wire Wire Line
+	1400 3500 1900 3500
+$Comp
+L CONN_01X03 P?
+U 1 1 586C7746
+P 1200 4050
+F 0 "P?" H 1200 4250 50  0000 C CNN
+F 1 "CONN_01X03" V 1300 4050 50  0000 C CNN
+F 2 "" H 1200 4050 50  0000 C CNN
+F 3 "" H 1200 4050 50  0000 C CNN
+	1    1200 4050
+	-1   0    0    1   
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 586C774C
+P 1550 3900
+F 0 "#PWR?" H 1550 3650 50  0001 C CNN
+F 1 "GND" H 1550 3750 50  0000 C CNN
+F 2 "" H 1550 3900 50  0000 C CNN
+F 3 "" H 1550 3900 50  0000 C CNN
+	1    1550 3900
+	-1   0    0    1   
+$EndComp
+Text Label 1900 4050 2    60   ~ 0
+5V
+Wire Wire Line
+	1400 3950 1550 3950
+Wire Wire Line
+	1550 3950 1550 3900
+Wire Wire Line
+	1400 4050 1900 4050
+Wire Wire Line
+	1400 4150 1900 4150
+Text Label 1900 3500 2    60   ~ 0
+PanServo
+Text Label 1900 4150 2    60   ~ 0
+TiltServo
+Text Label 1900 2850 2    60   ~ 0
+Steering
+Text Label 1900 2200 2    60   ~ 0
+Throttle
+Wire Wire Line
+	5050 3550 4450 3550
+Wire Wire Line
+	5050 3650 4450 3650
+Text Label 4450 3550 0    60   ~ 0
+PanServo
+Text Label 4450 3650 0    60   ~ 0
+TiltServo
+Wire Wire Line
+	5050 3750 4450 3750
+Text Label 4450 3750 0    60   ~ 0
+Throttle
+Wire Wire Line
+	5050 2100 4450 2100
+Wire Wire Line
+	7050 2100 7750 2100
+Text Label 4450 2100 0    60   ~ 0
+Steering
+Text Label 7750 2100 2    60   ~ 0
+PWMCHAN5
+$Comp
+L CONN_01X03 P?
+U 1 1 586C7C0E
+P 1200 4700
+F 0 "P?" H 1200 4900 50  0000 C CNN
+F 1 "CONN_01X03" V 1300 4700 50  0000 C CNN
+F 2 "" H 1200 4700 50  0000 C CNN
+F 3 "" H 1200 4700 50  0000 C CNN
+	1    1200 4700
+	-1   0    0    1   
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 586C7C14
+P 1550 4550
+F 0 "#PWR?" H 1550 4300 50  0001 C CNN
+F 1 "GND" H 1550 4400 50  0000 C CNN
+F 2 "" H 1550 4550 50  0000 C CNN
+F 3 "" H 1550 4550 50  0000 C CNN
+	1    1550 4550
+	-1   0    0    1   
+$EndComp
+Text Label 1900 4700 2    60   ~ 0
+5V
+Wire Wire Line
+	1400 4600 1550 4600
+Wire Wire Line
+	1550 4600 1550 4550
+Wire Wire Line
+	1400 4700 1900 4700
+Wire Wire Line
+	1400 4800 1900 4800
+Text Label 1900 4800 2    60   ~ 0
+PWMCHAN5
+$Comp
+L CONN_01X05 P?
+U 1 1 586C80E1
+P 1200 5550
+F 0 "P?" H 1200 5850 50  0000 C CNN
+F 1 "CONN_01X05" V 1300 5550 50  0000 C CNN
+F 2 "" H 1200 5550 50  0000 C CNN
+F 3 "" H 1200 5550 50  0000 C CNN
+	1    1200 5550
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	1400 5750 2250 5750
+Wire Wire Line
+	1400 5650 2250 5650
+Wire Wire Line
+	1400 5550 2250 5550
+Wire Wire Line
+	1400 5450 2250 5450
+Text Label 2250 5750 2    60   ~ 0
+Audio+
+Text Label 2250 5650 2    60   ~ 0
+Audio-
+Text Label 2250 5550 2    60   ~ 0
+SD
+Text Label 2250 5450 2    60   ~ 0
+5V
+$Comp
+L GND #PWR?
+U 1 1 586C8678
+P 1550 5300
+F 0 "#PWR?" H 1550 5050 50  0001 C CNN
+F 1 "GND" H 1550 5150 50  0000 C CNN
+F 2 "" H 1550 5300 50  0000 C CNN
+F 3 "" H 1550 5300 50  0000 C CNN
+	1    1550 5300
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	1400 5350 1550 5350
+Wire Wire Line
+	1550 5350 1550 5300
+$EndSCHEMATC
