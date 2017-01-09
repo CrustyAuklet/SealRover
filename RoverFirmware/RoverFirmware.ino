@@ -27,10 +27,10 @@ AudioControlSGTL5000     sgtl5000_1;     //xy=152,360
 #define PAN_SERVO 3
 #define TILT_SERVO 4
 //#define UNUSED_PWM2 5
-#define DIP_PIN_1 16
-#define DIP_PIN_2 17
-#define DIP_PIN_3 20
-#define DIP_PIN_4 21
+#define DIP_PIN_1 21
+#define DIP_PIN_2 20
+#define DIP_PIN_3 17
+#define DIP_PIN_4 16
 
 /*** GLOBAL VARIABLES ***/
 SBUS x8r(SBUS_INPUT);     // SBUS object, which is on HWSERIAL 1
