@@ -8,4 +8,4 @@ Its main responsibilities are:
  * expandability with additional PWM outputs and switches
  
  Schematic:
- ![SchematicImage](./RoverControlBoard.sch.svg)
+ ![SchematicImage](./RoverControlBoard_sch.svg)
