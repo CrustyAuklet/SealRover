@@ -1,4 +1,4 @@
-update=06-Jan-17 11:34:01
+update=09-Jan-17 23:43:09
 version=1
 last_client=kicad
 [pcbnew]
@@ -25,16 +25,6 @@ version=1
 NetIExt=net
 [general]
 version=1
-[schematic_editor]
-version=1
-PageLayoutDescrFile=
-PlotDirectoryName=
-SubpartIdSeparator=0
-SubpartFirstId=65
-NetFmtName=
-SpiceForceRefPrefix=0
-SpiceUseNetNumbers=0
-LabSize=60
 [eeschema]
 version=1
 LibDir=D:/Ethan/Desktop/Working/2_Projects/kicadLibs/library
@@ -72,3 +62,13 @@ LibName30=teensy
 LibName31=DipSwitches
 LibName32=D:/Ethan/Desktop/Working/2_Projects/kicadLibs/library/DipSwitches
 LibName33=D:/Ethan/Desktop/Working/2_Projects/kicadLibs/library/teensy
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60
