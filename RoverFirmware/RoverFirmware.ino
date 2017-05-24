@@ -40,12 +40,17 @@ uint16_t lostFrames = 0;  // counter for lost frames
 char tmpStr[30];          // temporary string for holding serial output
 float vol = .8;           // Volume setting ( range is 0 to 1, distortion when > .8 )
 short soundNum = 0;       // The number of the sound to play, set in ISR by dip-switches
+unsigned int panVal = 90; // tracking value for pan servo
 
 void setup() {
     Serial.begin(9600);
     // begin the SBUS communication
     Serial.println("Starting SBUS input...");
     x8r.begin();
+
+    // setup the pan servo
+    panServo.attach(PAN_SERVO);
+    panServo.write(90);
   
     // Setup the audio
     Serial.println("Starting Audio Controls...");
@@ -81,7 +86,16 @@ void setup() {
 void loop() {
     // look for a good SBUS packet from the receiver
     if(x8r.read(&channels[0], &failSafe, &lostFrames)){
-    
+
+        // move left till hit 180 degrees
+        if(channels[3] > 1050 && panVal < 180) {
+          panServo.write(panVal++);
+        }
+        // move right when less, till hit 0 degrees
+        else if(channels[3] < 950 && panVal > 0) {
+          panServo.write(panVal--);
+        }
+
         if(channels[5] > 1000 & !playSdWav1.isPlaying()) {
           playFile(soundNum);
         }
@@ -117,7 +131,7 @@ void setVolume() {
 void printInputs() {
     Serial.print("DATA: ");
     for(int i = 0; i < 16; i++){
-      sprintf(tmpStr, " CH%d: %4d", i+1, channels[i]);
+      sprintf(tmpStr, " CH%d: %4d", i, channels[i]);
       Serial.print(tmpStr);
     }
     //sprintf(tmpStr, " VOL: %02d SND: %d", vol, soundNum);
@@ -125,6 +139,8 @@ void printInputs() {
     Serial.print(vol);
     Serial.print(" DIP: ");
     Serial.print(soundNum);
+    Serial.print(" PAN_VAL: ");
+    Serial.print(panVal);
     Serial.println();
 }
 
