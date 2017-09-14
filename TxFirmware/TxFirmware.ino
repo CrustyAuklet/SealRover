@@ -61,10 +61,16 @@ void setup(){
   maxSteering = ctrSteering + STEERING_OFFSET;
   
   Serial.begin(115200);
+  
   //initiallize default ppm values
-  for(int i=0; i<CHANNEL_NUMBER; i++){
-    ppm[i]= CHANNEL_DEFAULT_VALUE;
-  }
+  ppm[0] = 1500;   // throttle
+  ppm[1] = 1500;   // steering
+  ppm[2] = 1500;   // x-axis for camera
+  ppm[3] = 1500;   // y-axis for camera
+  ppm[4] = 1000;   // 2-way rear switch
+  ppm[5] = 1000;   // big red button
+  ppm[6] = 1000;   // 3-way switch
+  ppm[7] = 1500;   // unused
 
   // Setup the output LEDs
   pinMode(redLedPin, OUTPUT);
