@@ -192,33 +192,50 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
+[Document10]
+DocumentPath=CtrlBoard_V1.CSPcbDoc
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=SQWJSPPP
+
 [SearchPath1]
 Path=D:\Ethan\Desktop\Working\2_Projects\1_ECAD\CS_Libs\*.*
 IncludeSubFolders=1
 
 [Parameter1]
-Name=Address1
-Value=115 McAllister Way
+Name=Organization
+Value=Costa Lab, UCSC
 
 [Parameter2]
-Name=Address2
-Value=Santa Cruz, CA 95060
-
-[Parameter3]
-Name=Address3
-Value=Author: Ethan Slattery
-
-[Parameter4]
-Name=Address4
-Value=
-
-[Parameter5]
 Name=Author
 Value=Ethan Slattery
 
+[Parameter3]
+Name=Address4
+Value=
+
+[Parameter4]
+Name=Address3
+Value=Author: Ethan Slattery
+
+[Parameter5]
+Name=Address2
+Value=Santa Cruz, CA 95060
+
 [Parameter6]
-Name=Organization
-Value=Costa Lab, UCSC
+Name=Address1
+Value=115 McAllister Way
 
 [Configuration1]
 Name=Default Configuration
