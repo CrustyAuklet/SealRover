@@ -1,0 +1,8 @@
+# Ignore list for Circuit Studio, Altium PCB design tool
+
+*.LOG
+*.WAS
+/Logs
+/Outputs
+/__Previews
+/History
