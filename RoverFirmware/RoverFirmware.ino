@@ -50,7 +50,8 @@ uint16_t lostFrames = 0;  // counter for lost frames
 char tmpStr[30];          // temporary string for holding serial output
 float vol = .8;           // Volume setting ( range is 0 to 1, distortion when > .8 )
 short soundNum = 0;       // The number of the sound to play, set in ISR by dip-switches
-unsigned int panVal = 90; // tracking value for pan servo
+unsigned int panVal  = 90; // tracking value for pan servo
+unsigned int tiltVal = 90; // tracking value for tilt servo
 int battVal;
 
 void setup() {
@@ -97,6 +98,10 @@ void setup() {
     attachInterrupt(DIP_PIN_2, isrDipSwitches, CHANGE);  // Bit 2
     attachInterrupt(DIP_PIN_3, isrDipSwitches, CHANGE);  // Bit 3
     isrDipSwitches();
+
+    // center the pan and tilt servo on reset
+    panServo.write(panVal);
+    tiltServo.write(tiltVal);
   
 } // END OF SETUP
 
@@ -106,19 +111,25 @@ void loop() {
     // look for a good SBUS packet from the receiver
     if(x8r.read(&channels[0], &failSafe, &lostFrames)){
 
-        // move left till hit 180 degrees
+        // Camera panning, with limits and static values
         if(channels[3] > 1050 && panVal < 180) {
           panServo.write(panVal++);
         }
-        // move right when less, till hit 0 degrees
         else if(channels[3] < 950 && panVal > 0) {
           panServo.write(panVal--);
         }
 
+        // Camera Tilting, with limits and static values.
+        // mechanical limitations limits range to between 50 and 110 degrees
+        if(channels[2] > 1050 && tiltVal < 110) {
+          tiltServo.write(tiltVal++);
+        }
+        else if(channels[2] < 950 && tiltVal > 50) {
+          tiltServo.write(tiltVal--);
+        }
+
         throttle.write(map(channels[0], 500, 1800, 0, 180));
         steering.write(map(channels[1], 190, 1800, 180, 0));
-        //panServo.write(map(channels[3], 200, 1800, 0, 180));
-        //tiltServo.write(map(channels[2], 200, 1800, 0, 180));
         
         if(channels[5] > 1000 & !playSdWav1.isPlaying()) {
           playFile(soundNum);
@@ -161,6 +172,8 @@ void printInputs() {
     Serial.print(soundNum);
     Serial.print(" PAN_VAL: ");
     Serial.print(panVal);
+    Serial.print(" TILT_VAL: ");
+    Serial.print(tiltVal);
     Serial.print(" BAT: ");
     Serial.print(battVal);
     Serial.println();
