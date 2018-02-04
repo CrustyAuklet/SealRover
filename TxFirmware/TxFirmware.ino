@@ -1,6 +1,6 @@
 /*
  * PPM generator originally written by David Hasko
- * on https://code.google.com/p/generate-ppm-signal/ 
+ * on https://code.google.com/p/generate-ppm-signal/
  */
 
 //////////////////////CONFIGURATION///////////////////////////////
@@ -48,8 +48,6 @@ int  steering = 1500;
 int  throttle = 1500;
 int  cameraX  = 1500;
 int  cameraY  = 1500;
-int  cameraSw = 0;
-int  motorSw  = 0;
 
 void setup(){
   // Get the center values of inputs at powerup
@@ -59,9 +57,9 @@ void setup(){
   maxThrottle = ctrThrottle + THROTTLE_OFFSET;
   minSteering = ctrSteering - STEERING_OFFSET;
   maxSteering = ctrSteering + STEERING_OFFSET;
-  
+
   Serial.begin(115200);
-  
+
   //initiallize default ppm values
   ppm[0] = 1500;   // throttle
   ppm[1] = 1500;   // steering
@@ -70,7 +68,7 @@ void setup(){
   ppm[4] = 1000;   // 2-way rear switch
   ppm[5] = 1000;   // big red button
   ppm[6] = 1000;   // 3-way switch
-  ppm[7] = 1500;   // unused
+  ppm[7] = 1500;   // pan tilt switch button
 
   // Setup the output LEDs
   pinMode(redLedPin, OUTPUT);
@@ -88,11 +86,11 @@ void setup(){
   // Setup the PPM oputput pin
   pinMode(sigPin, OUTPUT);
   digitalWrite(sigPin, !onState);  //set the PPM signal pin to the default state (off)
-  
+
   cli();
   TCCR1A = 0; // set entire TCCR1 register to 0
   TCCR1B = 0;
-  
+
   OCR1A = 100;  // compare match register, change this
   TCCR1B |= (1 << WGM12);  // turn on CTC mode
   TCCR1B |= (1 << CS11);   // 8 prescaler: 0,5 microseconds at 16mhz
@@ -121,7 +119,7 @@ void loop(){
     throttle = 1500;
   }
   ppm[0] = throttle;
-  
+
   // Steering (CH2)
   steering = map(analogRead(steeringPin), minSteering, maxSteering, MIN_CH_VALUE, MAX_CH_VALUE);
   ppm[1] = steering;
@@ -132,7 +130,7 @@ void loop(){
     cameraX = 1500;
   }
   ppm[2] = cameraX;
-  
+
   // Camera Y-Axis (CH4)
   cameraY = map(analogRead(cameraYpin), 0, 1024, MAX_CH_VALUE, MIN_CH_VALUE);
   if(cameraY > DEAD_ZONE_LOW && cameraY < DEAD_ZONE_HIGH) {  // Create deadZone for the Camera Y-Axis
@@ -143,11 +141,13 @@ void loop(){
   // Motor Kill Switch - ACTIVE FORWARD (CH5)
   if(digitalRead(engSwPin)){
     ppm[4] = 2000;
+    digitalWrite(greenLedPin, HIGH);
   }
   else {
     ppm[4] = 1000;
+    digitalWrite(greenLedPin, LOW);
   }
-  
+
   // Play Sound Switch - ACTIVE LOW (CH6)
   if(digitalRead(bigRedBtnPin)){
     ppm[5] = 1000;
@@ -172,9 +172,15 @@ void loop(){
     ppm[6] = 2000;
   }
 
-  digitalWrite(redLedPin, !digitalRead(cameraBtn));
-  digitalWrite(greenLedPin, digitalRead(engSwPin));
-  
+  if(!digitalRead(cameraBtn)) {
+    digitalWrite(redLedPin, HIGH);
+    ppm[7] = 2000;
+  }
+  else {
+    digitalWrite(redLedPin, LOW);
+    ppm[7] = 1000;
+  }
+
   Serial.print("THROTTLE: ");
   Serial.print(ppm[0]);
   Serial.print("    STEERING: ");
@@ -189,15 +195,15 @@ void loop(){
   Serial.print(ppm[5]);
   Serial.print("    CAM-PWR: ");
   Serial.print(ppm[6]);
-  Serial.print("    UNASSIGNED: ");
+  Serial.print("    P/T BUTTON: ");
   Serial.println(ppm[7]);
 }
 
 ISR(TIMER1_COMPA_vect){  //leave this alone
   static boolean state = true;
-  
+
   TCNT1 = 0;
-  
+
   if (state) {  //start pulse
     digitalWrite(sigPin, onState);
     OCR1A = PULSE_LENGTH * 2;
@@ -205,13 +211,13 @@ ISR(TIMER1_COMPA_vect){  //leave this alone
   } else{  //end pulse and calculate when to start the next pulse
     static byte cur_chan_numb;
     static unsigned int calc_rest;
-  
+
     digitalWrite(sigPin, !onState);
     state = true;
 
     if(cur_chan_numb >= CHANNEL_NUMBER){
       cur_chan_numb = 0;
-      calc_rest = calc_rest + PULSE_LENGTH;// 
+      calc_rest = calc_rest + PULSE_LENGTH;//
       OCR1A = (FRAME_LENGTH - calc_rest) * 2;
       calc_rest = 0;
     }
@@ -219,6 +225,6 @@ ISR(TIMER1_COMPA_vect){  //leave this alone
       OCR1A = (ppm[cur_chan_numb] - PULSE_LENGTH) * 2;
       calc_rest = calc_rest + ppm[cur_chan_numb];
       cur_chan_numb++;
-    }     
+    }
   }
 }
