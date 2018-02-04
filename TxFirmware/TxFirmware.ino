@@ -4,37 +4,38 @@
  */
 
 //////////////////////CONFIGURATION///////////////////////////////
-#define CHANNEL_NUMBER 8            // set the number of chanels
-#define CHANNEL_DEFAULT_VALUE 1500  // set the default servo value
-#define FRAME_LENGTH 22500          // set the PPM frame length in microseconds (1ms = 1000µs)
-#define PULSE_LENGTH 300            // set the pulse length
-#define onState 0                   // set polarity of the pulses: 1 is positive, 0 is negative
+#define CHANNEL_NUMBER        (8)     // set the number of chanels
+#define CHANNEL_DEFAULT_VALUE (1500)  // set the default servo value
+#define FRAME_LENGTH          (22500) // set the PPM frame length in microseconds (1ms = 1000µs)
+#define PULSE_LENGTH          (300)   // set the pulse length
+#define onState               (0)     // set polarity of the pulses: 1 is positive, 0 is negative
 
 /***** DIGITAL OUTPUT *****/
-#define sigPin 10                   // set PPM signal output pin on the arduino
-#define redLedPin 11                // The pin for red output LED
-#define greenLedPin 12              // The pin for green output LED
+#define sigPin                (10)    // set PPM signal output pin on the arduino
+#define RADIO_PWR             (13)    // Digital control of the tx radio power
+#define redLedPin             (11)    // The pin for red output LED
+#define greenLedPin           (12)    // The pin for green output LED
 
 /***** DIGITAL INPUT - ACTIVE LOW *****/
-#define cameraBtn 6                 // down press on camera joystick
-#define engSwPin 5                  // 2-way switch for car power
-#define bigRedBtnPin 4              // Big red momentary button
-#define cameraPwrUp 3               // 3-way camera switch in upper position
-#define cameraPwrDwn 2              // 3-way camera switch in lower position
+#define cameraBtn             (6)     // down press on camera joystick
+#define engSwPin              (5)     // 2-way switch for car power
+#define bigRedBtnPin          (4)     // Big red momentary button
+#define cameraPwrUp           (3)     // 3-way camera switch in upper position
+#define cameraPwrDwn          (2)     // 3-way camera switch in lower position
 
 /***** ANALOG INPUT *****/
-#define throttlePin A0              // controller throttle (trigger)
-#define steeringPin A1              // controller steering (wheel)
-#define cameraXpin A2               // Camera pan-tilt X-axis
-#define cameraYpin A3               // Camera pan-tilt Y-axis
+#define throttlePin           (A0)    // controller throttle (trigger)
+#define steeringPin           (A1)    // controller steering (wheel)
+#define cameraXpin            (A2)    // Camera pan-tilt X-axis
+#define cameraYpin            (A3)    // Camera pan-tilt Y-axis
 
 /***** PPM SETTINGS *****/
-#define MAX_CH_VALUE 2000           // Maximum value to send over PPM
-#define MIN_CH_VALUE 1000           // Minimum value to send over PPM
-#define STEERING_OFFSET 450         // Center offset for seeting pot
-#define THROTTLE_OFFSET 100         // Center Offset for throttle pot
-#define DEAD_ZONE_LOW 1450          // Set up lower limit for channel dead zones
-#define DEAD_ZONE_HIGH 1550         // Set up upper limit for channel dead zones
+#define MAX_CH_VALUE          (2000)  // Maximum value to send over PPM
+#define MIN_CH_VALUE          (1000)  // Minimum value to send over PPM
+#define STEERING_OFFSET       (450)   // Center offset for seeting pot
+#define THROTTLE_OFFSET       (100)   // Center Offset for throttle pot
+#define DEAD_ZONE_LOW         (1450)  // Set up lower limit for channel dead zones
+#define DEAD_ZONE_HIGH        (1550)  // Set up upper limit for channel dead zones
 //////////////////////////////////////////////////////////////////
 
 
@@ -50,6 +51,11 @@ int  cameraX  = 1500;
 int  cameraY  = 1500;
 
 void setup(){
+  // setup tx power switch output, and set to off
+  pinMode(RADIO_PWR, OUTPUT);
+  digitalWrite(RADIO_PWR, LOW);
+
+
   // Get the center values of inputs at powerup
   ctrThrottle = analogRead(throttlePin);
   ctrSteering = analogRead(steeringPin);
@@ -108,6 +114,9 @@ void setup(){
   digitalWrite(redLedPin, HIGH);
   delay(100);
   digitalWrite(redLedPin, LOW);
+
+  // Turn on radio with NPN transistor
+  digitalWrite(RADIO_PWR, HIGH);
 }
 
 
