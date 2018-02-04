@@ -5,6 +5,8 @@
 #include <PWMServo.h>
 #include "SBUS.h"
 
+#define DEBUG_OUTPUT 0
+
 PWMServo throttle;
 PWMServo steering;
 PWMServo panServo;
@@ -20,6 +22,9 @@ AudioConnection          patchCord2(playSdWav1, 1, i2s1, 1);
 AudioControlSGTL5000     sgtl5000_1;     //xy=152,360
 // GUItool: end automatically generated code
 
+// defines for general use and eliminating magic numbers
+#define NUM_CHANNELS      (8)
+
 // Use these with the audio adaptor board
 #define SDCARD_CS_PIN     (10)
 #define SDCARD_MOSI_PIN   (7)
@@ -33,8 +38,9 @@ AudioControlSGTL5000     sgtl5000_1;     //xy=152,360
 #define BATT_SENSE        (10)
 #define TEMP_SENSE        (11)
 
-
 // Define outputs
+#define CENTER_VAL      (90)
+#define THROTTLE_STOP   (70)
 #define THROTTLE        (3)
 #define STEERING        (4)
 #define PAN_SERVO       (5)
@@ -43,16 +49,18 @@ AudioControlSGTL5000     sgtl5000_1;     //xy=152,360
 #define PWM_6           (20)
 
 /*** GLOBAL VARIABLES ***/
-SBUS x8r(SBUS_INPUT);     // SBUS object, which is on HWSERIAL 1
-uint16_t channels[16];    // RX channels read from sbus 11 bit unsigned values (0-2047)
-uint8_t failSafe;         // failsafe flag
-uint16_t lostFrames = 0;  // counter for lost frames
-char tmpStr[30];          // temporary string for holding serial output
-float vol = .8;           // Volume setting ( range is 0 to 1, distortion when > .8 )
-short soundNum = 0;       // The number of the sound to play, set in ISR by dip-switches
+SBUS x8r(SBUS_INPUT);      // SBUS object, which is on HWSERIAL 1
+uint16_t channels[16];     // RX channels read from sbus 11 bit unsigned values (0-2047)
+uint8_t failSafe;          // failsafe flag
+uint16_t lostFrames = 0;   // counter for lost frames
+char tmpStr[30];           // temporary string for holding serial output
+float vol = .8;            // Volume setting ( range is 0 to 1, distortion when > .8 )
+short soundNum = 0;        // The number of the sound to play, set in ISR by dip-switches
 unsigned int panVal  = 90; // tracking value for pan servo
 unsigned int tiltVal = 90; // tracking value for tilt servo
-int battVal;
+unsigned int throt   = 90; // tracking value for pan servo
+unsigned int steer   = 90; // tracking value for tilt servo
+int battVal;               // stores the battery value of the car, could be used for lipo protection
 
 void setup() {
     Serial.begin(9600);
@@ -60,16 +68,12 @@ void setup() {
     Serial.println("Starting SBUS input...");
     x8r.begin();
 
-    // setup the pan servo
-    panServo.attach(PAN_SERVO);
-    panServo.write(90);
-  
     // Setup the audio
     Serial.println("Starting Audio Controls...");
     AudioMemory(8);
     sgtl5000_1.enable();
     sgtl5000_1.volume(vol);
-  
+
     // Make sure that SD card is inserted
     SPI.setMOSI(SDCARD_MOSI_PIN);
     SPI.setSCK(SDCARD_SCK_PIN);
@@ -82,14 +86,20 @@ void setup() {
     }
     Serial.println("SD Card detected...");
 
-    // create PWM channels for motor outputs
+    // create PWM channels for motor outputs and set starting values
     throttle.attach(THROTTLE, 1000, 2000);
+    throttle.write(THROTTLE_STOP);
     steering.attach(STEERING, 1000, 2000);
+    steering.write(CENTER_VAL);
     panServo.attach(PAN_SERVO, 500, 2500);
+    panServo.write(CENTER_VAL);
     tiltServo.attach(TILT_SERVO, 800, 2200);
+    panServo.write(CENTER_VAL);
     pwm_ch5.attach(PWM_5, 1000, 2000);
-    pwm_ch5.attach(PWM_6, 1000, 2000);
-    
+    pwm_ch5.write(CENTER_VAL);
+    pwm_ch6.attach(PWM_6, 1000, 2000);
+    pwm_ch6.write(CENTER_VAL);
+
     // Setup the interrupts for DIP switches
     pinMode(DIP_PIN_1, INPUT_PULLUP);
     pinMode(DIP_PIN_2, INPUT_PULLUP);
@@ -102,41 +112,52 @@ void setup() {
     // center the pan and tilt servo on reset
     panServo.write(panVal);
     tiltServo.write(tiltVal);
-  
+
 } // END OF SETUP
 
 void loop() {
     battVal = analogRead(BATT_SENSE);
-  
+
     // look for a good SBUS packet from the receiver
     if(x8r.read(&channels[0], &failSafe, &lostFrames)){
+        if(failSafe) {
+            throttle.write(THROTTLE_STOP);
+            steering.write(CENTER_VAL);
+        }
+        else {
 
-        // Camera panning, with limits and static values
-        if(channels[3] > 1050 && panVal < 180) {
-          panServo.write(panVal++);
-        }
-        else if(channels[3] < 950 && panVal > 0) {
-          panServo.write(panVal--);
-        }
+            // Camera panning, with limits and static values
+            if(channels[3] > 1050 && panVal < 180) {
+              panServo.write(panVal++);
+            }
+            else if(channels[3] < 950 && panVal > 0) {
+              panServo.write(panVal--);
+            }
 
-        // Camera Tilting, with limits and static values.
-        // mechanical limitations limits range to between 50 and 110 degrees
-        if(channels[2] > 1050 && tiltVal < 110) {
-          tiltServo.write(tiltVal++);
-        }
-        else if(channels[2] < 950 && tiltVal > 50) {
-          tiltServo.write(tiltVal--);
-        }
+            // Camera Tilting, with limits and static values.
+            // mechanical limitations limits range to between 50 and 110 degrees
+            if(channels[2] > 1050 && tiltVal < 110) {
+              tiltServo.write(tiltVal++);
+            }
+            else if(channels[2] < 950 && tiltVal > 50) {
+              tiltServo.write(tiltVal--);
+            }
 
-        throttle.write(map(channels[0], 500, 1800, 0, 180));
-        steering.write(map(channels[1], 190, 1800, 180, 0));
-        
-        if(channels[5] > 1000 & !playSdWav1.isPlaying()) {
-          playFile(soundNum);
+            // Map values for steering and throttle and then send them
+            throt = map(channels[0], 500, 1800, 0, 180);
+            steer = map(channels[1], 180, 1800, 180, 0);
+            throttle.write(throt);
+            steering.write(steer);
+
+            if(channels[5] > 1000 & !playSdWav1.isPlaying()) {
+              playFile(soundNum);
+            }
         }
-    
-        printInputs();
     }
+    #if DEBUG_OUTPUT
+    printInputs();
+    #endif
+
 }
 
 // Playfile function from Teensy Example
@@ -161,11 +182,15 @@ void setVolume() {
 
 void printInputs() {
     Serial.print("DATA: ");
-    for(int i = 0; i < 16; i++){
+    for(int i = 0; i < NUM_CHANNELS; i++){
       sprintf(tmpStr, " CH%d: %4d", i, channels[i]);
       Serial.print(tmpStr);
     }
     //sprintf(tmpStr, " VOL: %02d SND: %d", vol, soundNum);
+    Serial.print(" STEERING: ");
+    Serial.print(steer);
+    Serial.print(" THROTTLE: ");
+    Serial.print(throt);
     Serial.print(" VOL: ");
     Serial.print(vol);
     Serial.print(" DIP: ");
@@ -176,6 +201,10 @@ void printInputs() {
     Serial.print(tiltVal);
     Serial.print(" BAT: ");
     Serial.print(battVal);
+    Serial.print(" FAILSAFE: ");
+    Serial.print(failSafe);
+    Serial.print(" LOST: ");
+    Serial.print(lostFrames);
     Serial.println();
 }
 
