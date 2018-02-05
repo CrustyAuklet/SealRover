@@ -5,7 +5,7 @@
 #include <PWMServo.h>
 #include "SBUS.h"
 
-#define DEBUG_OUTPUT 0
+#define DEBUG_OUTPUT 1
 
 PWMServo throttle;
 PWMServo steering;
@@ -48,19 +48,36 @@ AudioControlSGTL5000     sgtl5000_1;     //xy=152,360
 #define PWM_5           (21)
 #define PWM_6           (20)
 
+// Define SBUS channels
+#define THROTTLE_IN         (0)
+#define STEERING_IN         (1)
+#define CAM_TILT_IN         (2)
+#define CAM_PAN_IN          (3)
+#define DUAL_SWITCH_IN      (4)
+#define SOUND_PLAY_IN       (5)
+#define SCALING_IN          (6)
+#define JOYSTICK_BTN_IN     (7)
+
+// Define speed scaling values
+#define SLOW_SCALE          (0.15)
+#define MEDIUM_SCALE        (0.25)
+#define FULL_SCALE          (1.00)
+#define VOLUME_SETTING      (0.80)
+
 /*** GLOBAL VARIABLES ***/
-SBUS x8r(SBUS_INPUT);      // SBUS object, which is on HWSERIAL 1
-uint16_t channels[16];     // RX channels read from sbus 11 bit unsigned values (0-2047)
-uint8_t failSafe;          // failsafe flag
-uint16_t lostFrames = 0;   // counter for lost frames
-char tmpStr[30];           // temporary string for holding serial output
-float vol = .8;            // Volume setting ( range is 0 to 1, distortion when > .8 )
-short soundNum = 0;        // The number of the sound to play, set in ISR by dip-switches
-unsigned int panVal  = 90; // tracking value for pan servo
-unsigned int tiltVal = 90; // tracking value for tilt servo
-unsigned int throt   = 90; // tracking value for pan servo
-unsigned int steer   = 90; // tracking value for tilt servo
-int battVal;               // stores the battery value of the car, could be used for lipo protection
+SBUS x8r(SBUS_INPUT);                   // SBUS object, which is on HWSERIAL 1
+uint16_t channels[16];                  // RX channels read from sbus 11 bit unsigned values (0-2047)
+char tmpStr[30];                        // temporary string for holding serial output
+uint8_t  failSafe    = 1;               // failsafe flag
+uint16_t lostFrames  = 0;               // counter for lost frames
+float vol            = VOLUME_SETTING;  // Volume setting ( range is 0 to 1, distortion when > .8 )
+short soundNum       = 0;               // The number of the sound to play, set in ISR by dip-switches
+unsigned int panVal  = CENTER_VAL;      // tracking value for pan servo
+unsigned int tiltVal = CENTER_VAL;      // tracking value for tilt servo
+unsigned int steer   = CENTER_VAL;      // tracking value for steering
+int throt            = THROTTLE_STOP;   // tracking value for throttle
+int battVal          = 0;               // stores the battery value of the car, could be used for lipo protection
+float scaling        = 1.0;             // Value to scale the throttle by
 
 void setup() {
     Serial.begin(9600);
@@ -127,29 +144,55 @@ void loop() {
         else {
 
             // Camera panning, with limits and static values
-            if(channels[3] > 1050 && panVal < 180) {
+            if(channels[CAM_PAN_IN] > 1050 && panVal < 180) {
               panServo.write(panVal++);
             }
-            else if(channels[3] < 950 && panVal > 0) {
+            else if(channels[CAM_PAN_IN] < 950 && panVal > 0) {
               panServo.write(panVal--);
             }
 
             // Camera Tilting, with limits and static values.
             // mechanical limitations limits range to between 50 and 110 degrees
-            if(channels[2] > 1050 && tiltVal < 110) {
+            if(channels[CAM_TILT_IN] > 1050 && tiltVal < 110) {
               tiltServo.write(tiltVal++);
             }
-            else if(channels[2] < 950 && tiltVal > 50) {
+            else if(channels[CAM_TILT_IN] < 950 && tiltVal > 50) {
               tiltServo.write(tiltVal--);
             }
 
+            // update scaling factor
+            if(channels[SCALING_IN] < 600) {
+                // creeping speed
+                scaling = SLOW_SCALE;
+            }
+            else if(channels[SCALING_IN] < 1500) {
+                // moderate speed
+                scaling = MEDIUM_SCALE;
+            }
+            else {
+                // fastest - no scaling
+                scaling = FULL_SCALE;
+            }
+
             // Map values for steering and throttle and then send them
-            throt = map(channels[0], 500, 1800, 0, 180);
-            steer = map(channels[1], 180, 1800, 180, 0);
+            throt = map(channels[THROTTLE_IN], 500, 1800, 0, 180);
+            steer = map(channels[STEERING_IN], 180, 1800, 180, 0);
+
+            if(throt > 71){
+                throt -= THROTTLE_STOP;
+                throt *= scaling;
+                throt += THROTTLE_STOP;
+            }
+            else if(throt < 69) {
+                throt = THROTTLE_STOP - throt;
+                throt *= scaling;
+                throt = THROTTLE_STOP - throt;
+            }
+
             throttle.write(throt);
             steering.write(steer);
 
-            if(channels[5] > 1000 & !playSdWav1.isPlaying()) {
+            if(channels[SOUND_PLAY_IN] > 1000 & !playSdWav1.isPlaying()) {
               playFile(soundNum);
             }
         }
